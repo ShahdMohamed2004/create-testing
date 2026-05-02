@@ -2242,60 +2242,30 @@ function rQ(q){
 
 // ══ SPEAKING RENDERER ══════════════════════════════
 function rSpeak(q,a){
- var mode=S.spMode[q.id]||"choose";
+ S.spMode[q.id]="record";
  var dur=S.spDur[q.id]||0;
- var h="";
- if(mode==="choose"){
-  h='<div class="sp-box sp-choose">'
-   +'<div class="sp-lbl" style="color:#93c5fd;">🗣️ Choose your speaking assessment mode:</div>'
-   +'<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:4px;">'
-   +'<button class="btn bn" onclick="setSpMode(\''+q.id+'\',\'record\')">🎙️ Self-Record My Answer</button>'
-   +'<button class="btn bo" onclick="setSpMode(\''+q.id+'\',\'examiner\')">👨‍🏫 Assessed by Examiner</button>'
-   +'</div></div>';
- } else if(mode==="record"){
-  var isRec=S.spRec[q.id]||false;
-  var recDone=S.spRecDone[q.id]||null;
-  h='<div class="sp-box sp-rec">'
-   +'<div class="sp-lbl" style="color:#fca5a5;">🎙️ Self-Recording Mode</div>'
-   +'<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px;">';
-  if(!recDone){
-   if(!isRec){
-    h+='<button class="btn bgg" onclick="startRec(\''+q.id+'\')">⏺ Start Recording</button>'
-     +'<span style="font-size:11px;color:#94a3b8;">Press to record your speaking response</span>';
-   } else {
-    h+='<button class="btn br" onclick="stopRec(\''+q.id+'\')">⏹ Stop Recording</button>'
-     +'<span class="rec-dot" id="rtim-'+q.id+'" style="font-size:12px;">● REC '+fmtDur(dur)+'</span>';
-   }
+ var isRec=S.spRec[q.id]||false;
+ var recDone=S.spRecDone[q.id]||null;
+ var h='<div class="sp-box sp-rec">'
+  +'<div class="sp-lbl" style="color:#fca5a5;">🎙️ Self-Recording Mode</div>'
+  +'<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px;">';
+ if(!recDone){
+  if(!isRec){
+   h+='<button class="btn bgg" onclick="startRec(\''+q.id+'\')">⏺ Start Recording</button>'
+    +'<span style="font-size:11px;color:#94a3b8;">Press to record your speaking response</span>';
   } else {
-   h+='<span style="color:#10b981;font-size:12px;font-weight:600;">✅ Recorded: '+fmtDur(dur)+'</span>'
-    +'<button class="btn bo bsm" onclick="confirmReRec(\''+q.id+'\')">↺ Re-record</button>'
-    +'<audio id="rplay-'+q.id+'" controls src="'+recDone+'" style="height:30px;filter:invert(.75) hue-rotate(175deg);"></audio>'
-    +'<button class="btn bgg bsm" onclick="downloadRecording(\''+q.id+'\')">⬇ Download My Recording</button>';
+   h+='<button class="btn br" onclick="stopRec(\''+q.id+'\')">⏹ Stop Recording</button>'
+    +'<span class="rec-dot" id="rtim-'+q.id+'" style="font-size:12px;">● REC '+fmtDur(dur)+'</span>';
   }
-  h+='</div>'
-   +'<textarea class="essa" style="min-height:50px;" id="sp-'+q.id+'" placeholder="Notes (optional)…" oninput="setAns(\''+q.id+'\',this.value)">'+x(a)+'</textarea>'
-   +'<button class="btn bo bsm" style="margin-top:7px;" onclick="setSpMode(\''+q.id+'\',\'choose\')">← Change mode</button>'
-   +'</div>';
  } else {
-  var hasFile=!!(S.spExamFile[q.id]);
-  var isOn=S._spTOn&&S._spTOn[q.id];
-  h='<div class="sp-box sp-exam">'
-   +'<div class="sp-lbl" style="color:#a7f3d0;">👨‍🏫 Examiner Assessment Mode</div>'
-   +'<div style="font-size:11px;color:#94a3b8;margin-bottom:9px;">The examiner records your speaking. Upload their recording file here and track time spent.</div>'
-   +'<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px;">'
-   +'<button class="btn '+(isOn?"br":"bgg")+' bsm" id="sptbtn-'+q.id+'" onclick="spTimerTgl(\''+q.id+'\')">'+(isOn?"⏸ Pause":"▶ Start Timer")+'</button>'
-   +'<span id="sptim-'+q.id+'" style="font-size:13px;color:#a7f3d0;font-variant-numeric:tabular-nums;font-weight:600;">'+fmtDur(dur)+'</span>'
-   +(dur>0?'<span class="lbdg B2" style="font-size:10px;">⏱ '+fmtDur(dur)+'</span>':"")
-   +'</div>'
-   +'<div class="fg" style="margin-bottom:8px;">'
-   +'<label>📎 Upload Examiner Recording:</label>'
-      +'<input type="file" id="spf-'+q.id+'" accept="audio/*,video/*" data-qid="'+q.id+'" onchange="spFileUp(this)">' 
-   +(hasFile?'<div style="color:#10b981;font-size:10px;margin-top:3px;">✅ '+x(S.spExamFile[q.id].name||"")+'</div>':"")
-   +'</div>'
-   +'<textarea class="essa" style="min-height:50px;" id="sp-'+q.id+'" placeholder="Examiner notes (optional)…" oninput="setAns(\''+q.id+'\',this.value)">'+x(a)+'</textarea>'
-   +'<button class="btn bo bsm" style="margin-top:7px;" onclick="setSpMode(\''+q.id+'\',\'choose\')">← Change mode</button>'
-   +'</div>';
+  h+='<span style="color:#10b981;font-size:12px;font-weight:600;">✅ Recorded: '+fmtDur(dur)+'</span>'
+   +'<button class="btn bo bsm" onclick="confirmReRec(\''+q.id+'\')">↺ Re-record</button>'
+   +'<audio id="rplay-'+q.id+'" controls src="'+recDone+'" style="height:30px;filter:invert(.75) hue-rotate(175deg);"></audio>'
+   +'<button class="btn bgg bsm" onclick="downloadRecording(\''+q.id+'\')">⬇ Download My Recording</button>';
  }
+ h+='</div>'
+  +'<textarea class="essa" style="min-height:50px;" id="sp-'+q.id+'" placeholder="Notes (optional)…" oninput="setAns(\''+q.id+'\',this.value)">'+x(a)+'</textarea>'
+  +'</div>';
  return h;
 }
 
@@ -3121,6 +3091,33 @@ function rResults(){
   // Sort a copy for ranking (best→worst)
   var sortedForRank=subs.map(function(s,i){return{idx:i,tot:tots[i].total};}).sort(function(a,b){return b.tot-a.tot;});
   var rankMap={}; sortedForRank.forEach(function(r,ri){rankMap[r.idx]=ri+1;});
+  // 📋 Per-Student Collapsible Details (Fold)
+  h+='<div style="margin-bottom:15px;">';
+  h+='<h3 style="font-family:Merriweather,serif;color:#cbd5e1;font-size:14px;margin:0 0 8px 0;">📋 Quick View — Click any student to expand</h3>';
+  subs.forEach(function(sub,i){
+   var t=tots[i];
+   var lvl=t.pend?"–":clvl(t.total);
+   var grpC=sub.grp==="Group B"?"grpB":"grpA";
+   h+='<details style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:8px 12px;margin-bottom:6px;">'
+    +'<summary style="cursor:pointer;font-size:13px;color:#f1f5f9;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">'
+    +'<span><strong>'+x(sub.name)+'</strong> — <span style="color:#94a3b8;">'+x(sub.sid)+'</span> — <span class="lbdg '+grpC+'" style="font-size:10px;">'+x(sub.grp||"?")+'</span></span>'
+    +'<span style="font-weight:700;color:#fbbf24;">'+t.total+'/100 '+(t.pend?"⏳":"✅")+'</span>'
+    +'</summary>'
+    +'<div style="margin-top:8px;font-size:12px;color:#cbd5e1;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;">'
+    +'<div>📖 Reading: <strong>'+t.reading+'/25</strong></div>'
+    +'<div>🎧 Listening: <strong>'+t.listening+'/25</strong></div>'
+    +'<div>✍️ Writing: <strong>'+t.writing+'/25</strong></div>'
+    +'<div>🗣️ Speaking: <strong>'+t.speaking+'/25</strong></div>'
+    +'<div>CEFR: <strong>'+lvl+'</strong></div>'
+    +'<div>Email: <span style="color:#a5f3fc;">'+(sub.email?x(sub.email):"—")+'</span></div>'
+    +'</div>'
+    +'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">'
+    +'<button class="btn bn bsm" onclick="S.viewSub=\''+sub.id+'\';render()">👁️ Full View</button>'
+    +'<button class="btn br bsm" onclick="deleteStudentRecord(\''+sub.id+'\',\''+x(sub.name).replace(/'/g,"\\'")+'\')">🗑️ Delete</button>'
+    +'</div>'
+    +'</details>';
+  });
+  h+='</div>';
   h+='<table class="rtbl"><thead><tr><th>Rank</th><th>#</th><th>Photo</th><th>Name</th><th>ID</th><th>Group</th><th>R/25</th><th>L/25</th><th>W/25</th><th>Sp/25</th><th>Total/100</th><th>Avg%</th><th>Best Skill</th><th>Worst Skill</th><th>CEFR</th><th>Status</th><th data-col="student-email">Student Email</th><th></th></tr></thead><tbody>';
   subs.forEach(function(sub,i){
    var t=tots[i],lvl=t.pend?"–":clvl(t.total),lc=lvl!=="–"?" "+lvl:"";
